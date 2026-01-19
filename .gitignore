@@ -1,0 +1,32 @@
+# Логи
+*.log
+npm-debug.log*
+
+# Файлы среды выполнения
+.DS_Store
+Thumbs.db
+
+# Зависимости
+/node_modules
+/.pnpm-store
+
+# Сборка
+/dist
+/.vite
+*.local
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.swp
+*.swo
+
+# Окружение
+.env
+.env.local
+.env.*.local
+
+# Временные файлы
+*.tmp
+*.temp

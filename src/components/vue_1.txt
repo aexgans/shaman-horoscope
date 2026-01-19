@@ -1,0 +1,386 @@
+<template>
+  <div class="app">
+    <header class="header">
+      <h1>🎂 Анализатор Даты Рождения</h1>
+      <p class="subtitle">Тестирование с форматированием дат</p>
+    </header>
+
+    <main class="main-content">
+      <div class="card">
+        <h2>📅 Введите дату рождения</h2>
+        
+        <div class="input-group">
+          <input 
+            type="date" 
+            v-model="testDate"
+            class="date-input"
+          />
+        </div>
+        
+        <button @click="calculate" class="calculate-btn">
+          🔮 Рассчитать
+        </button>
+        
+        <!-- Быстрые тесты -->
+        <div class="quick-tests">
+          <p>Примеры:</p>
+          <div class="quick-buttons">
+            <button 
+              v-for="example in testExamples"
+              :key="example.date"
+              @click="runExample(example.date)"
+              class="quick-btn"
+            >
+              {{ example.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Результаты -->
+        <div v-if="result" class="results">
+          <h3>📊 Результаты расчета</h3>
+          
+          <div class="result-section">
+            <h4>📅 Дата рождения</h4>
+            <p><strong>{{ result.formattedDate }}</strong></p>
+            <p class="small">Введенная дата: {{ result.birthDate }}</p>
+          </div>
+          
+          <div class="result-section">
+            <h4>🎯 Год</h4>
+            <p><strong>{{ result.year }} год</strong></p>
+            <p>Начало года: {{ result.yearStartDateFormatted }}</p>
+            <p>День года: {{ result.yearDay }}</p>
+          </div>
+          
+          <div class="result-section">
+            <h4>🎭 Характеристики года</h4>
+            <div class="characteristics-grid">
+              <div class="characteristic">
+                <span class="label">Животное:</span>
+                <span class="value">{{ result.animal }}</span>
+              </div>
+              <div class="characteristic">
+                <span class="label">Характер:</span>
+                <span class="value">{{ result.character }}</span>
+              </div>
+              <div class="characteristic">
+                <span class="label">Стихия:</span>
+                <span class="value">{{ result.element }}</span>
+              </div>
+              <div class="characteristic">
+                <span class="label">Менги:</span>
+                <span class="value">{{ result.mengi }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="result-section">
+            <h4>📆 Период</h4>
+            <div class="period-info">
+              <p><strong>{{ result.period }}</strong></p>
+              <p>День {{ result.periodDay }} из {{ result.periodDuration }}</p>
+              <p>{{ result.periodStartFormatted }} – {{ result.periodEndFormatted }}</p>
+              
+              <div v-if="result.isPeakPeriod" class="peak-indicator">
+                ⚡ Пик периода (21-35 день)
+              </div>
+              
+              <div v-if="result.isOverlapPeriod" class="overlap-indicator">
+                🔄 Наложение периодов
+                <span v-if="result.nextPeriod">
+                  <br>Следующий период: {{ result.nextPeriod.name }} 
+                  ({{ result.nextPeriod.startDateFormatted }})
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Отладка -->
+          <details class="debug-section">
+            <summary>Отладочная информация</summary>
+            <pre class="debug-info">{{ result.indices }}</pre>
+          </details>
+        </div>
+        
+        <div v-if="error" class="error-message">
+          ❌ {{ error }}
+        </div>
+      </div>
+    </main>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { calculationService } from './services/calculationService.js'
+
+const testDate = ref('1990-06-15')
+const result = ref(null)
+const error = ref('')
+
+const testExamples = [
+  { label: '15.06.1990', date: '1990-06-15' },
+  { label: '01.01.2000', date: '2000-01-01' },
+  { label: '08.02.1940', date: '1940-02-08' },
+  { label: '27.01.1941', date: '1941-01-27' },
+  { label: '31.12.1999', date: '1999-12-31' }
+]
+
+const calculate = () => {
+  try {
+    result.value = calculationService.calculateAll(testDate.value)
+    error.value = ''
+  } catch (err) {
+    error.value = err.message
+    result.value = null
+  }
+}
+
+const runExample = (date) => {
+  testDate.value = date
+  calculate()
+}
+
+onMounted(() => {
+  calculate()
+})
+</script>
+
+<style>
+/* Базовые стили */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Шапка */
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+}
+
+.header h1 {
+  font-size: 2.2rem;
+  color: #2d3748;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #4a5568;
+}
+
+/* Карточка */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.card h2 {
+  font-size: 1.5rem;
+  color: #2d3748;
+  margin-bottom: 20px;
+}
+
+/* Форма */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.date-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: #4299e1;
+}
+
+/* Кнопка */
+.calculate-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+  margin-bottom: 20px;
+}
+
+.calculate-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Быстрые тесты */
+.quick-tests {
+  margin-top: 20px;
+}
+
+.quick-tests p {
+  margin-bottom: 10px;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.quick-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.quick-btn {
+  padding: 8px 16px;
+  background: #edf2f7;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.quick-btn:hover {
+  background: #e2e8f0;
+}
+
+/* Результаты */
+.results {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid #e2e8f0;
+}
+
+.results h3 {
+  font-size: 1.3rem;
+  color: #2d3748;
+  margin-bottom: 20px;
+}
+
+.result-section {
+  margin-bottom: 25px;
+  padding: 15px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border-left: 4px solid #4a6cf7;
+}
+
+.result-section h4 {
+  font-size: 1.1rem;
+  color: #2d3748;
+  margin-bottom: 10px;
+}
+
+.characteristics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.characteristic {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.label {
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.value {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.period-info {
+  margin-top: 10px;
+}
+
+.peak-indicator {
+  margin-top: 10px;
+  padding: 8px;
+  background: #feebc8;
+  color: #dd6b20;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.overlap-indicator {
+  margin-top: 10px;
+  padding: 8px;
+  background: #c6f6d5;
+  color: #276749;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.small {
+  font-size: 0.9rem;
+  color: #718096;
+}
+
+/* Отладка */
+.debug-section {
+  margin-top: 20px;
+  padding: 10px;
+  background: #edf2f7;
+  border-radius: 6px;
+}
+
+.debug-section summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: #4a5568;
+  padding: 5px;
+}
+
+.debug-info {
+  margin-top: 10px;
+  padding: 10px;
+  background: white;
+  border-radius: 4px;
+  font-size: 12px;
+  overflow: auto;
+  max-height: 200px;
+}
+
+/* Ошибки */
+.error-message {
+  margin-top: 20px;
+  padding: 12px;
+  background: #fed7d7;
+  color: #c53030;
+  border-radius: 6px;
+  font-weight: 500;
+}
+</style>
