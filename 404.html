@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="utf-8">
     <title>Redirecting...</title>
     <script>
-        // Редирект на правильный путь
-        if (window.location.pathname === '/' || !window.location.pathname.includes('shaman-horoscope')) {
-            window.location.href = '/shaman-horoscope/';
-        }
+      // Сохраняем путь и параметры
+      var path = window.location.pathname;
+      var search = window.location.search;
+      var hash = window.location.hash;
+      
+      // Перенаправляем на index.html с сохранением маршрута
+      window.location.href = '/shaman-horoscope/index.html' + path + search + hash;
     </script>
-</head>
-<body>
-    <p>Redirecting to Shaman Horoscope...</p>
-</body>
+    <noscript>
+      <meta http-equiv="refresh" content="0; url=/shaman-horoscope/index.html">
+    </noscript>
+  </head>
+  <body>
+    <p>Redirecting...</p>
+  </body>
 </html>
