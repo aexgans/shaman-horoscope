@@ -6,11 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#1a1a2e">
     <meta name="description" content="Шаманский гороскоп - древняя мудрость животных, стихий и луны">
+    
+    <!-- PWA meta tags -->
     <link rel="manifest" href="/manifest.webmanifest">
+    
     <title>Шаманский Гороскоп</title>
   </head>
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
+    
+    <!-- Простая проверка PWA -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
   </body>
 </html>
