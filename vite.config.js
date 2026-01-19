@@ -2,7 +2,12 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const repositoryName = 'shaman-horoscope'
+
 export default defineConfig({
+   base: process.env.NODE_ENV === 'production' 
+    ? `/shaman-horoscope/`  
+    : '/',               
   plugins: [
     vue(),
     VitePWA({
