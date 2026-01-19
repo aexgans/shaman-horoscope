@@ -4,9 +4,6 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   base: '/shaman-horoscope/',
-  build: {
-    outDir: 'docs'  
-  },
   plugins: [
     vue(),
     VitePWA({
