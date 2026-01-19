@@ -3,7 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
-  base: '/shaman-horoscope/',
+  base: '/shaman-horoscope/', // ВАЖНО: название репозитория!
   plugins: [
     vue(),
     VitePWA({
@@ -17,23 +17,20 @@ export default defineConfig({
         background_color: '#0f3460',
         display: 'standalone',
         orientation: 'portrait',
-        scope: '/',
-        start_url: '/',
+        scope: '/shaman-horoscope/', // Добавьте это!
+        start_url: '/shaman-horoscope/',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: '/shaman-horoscope/pwa-192x192.png', // Добавьте префикс!
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'pwa-512x512.png',
+            src: '/shaman-horoscope/pwa-512x512.png', // Добавьте префикс!
             sizes: '512x512',
             type: 'image/png'
           }
         ]
-      },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}']
       }
     })
   ]
